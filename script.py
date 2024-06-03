@@ -5,6 +5,8 @@
 import Adafruit_DHT
 import time
 import matplotlib.pyplot as plt
+import csv
+import os
 
 # Set sensor type : DHT11
 sensor = Adafruit_DHT.DHT11
@@ -12,12 +14,25 @@ sensor = Adafruit_DHT.DHT11
 # Set GPIO sensor is connected to
 gpio = 4
 
-# Use a list to store the readings
+# File to save data
+data_file = 'dht11_data.csv'
+
+# Check if the file exists
+file_exists = os.path.isfile(data_file)
+
+# Initialize CSV file with headers if it doesn't exist
+if not file_exists:
+    with open(data_file, mode='w') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Timestamp', 'Temperature (C)', 'Humidity (%)'])
+
+# Use lists to store the readings for plotting
 temperature_data = []
 humidity_data = []
 time_data = []
 
 try:
+    print("Press Ctrl+C to stop the program.")
     while True:
         # Use read_retry method. This will retry up to 15 times to
         # get a sensor reading (waiting 2 seconds between each retry).
@@ -26,9 +41,15 @@ try:
         # Reading data
         if humidity is not None and temperature is not None:
             print('Temp={0:0.1f}*C  Humidity={1:0.1f}%'.format(temperature, humidity))
+            timestamp = time.time()
             temperature_data.append(temperature)
             humidity_data.append(humidity)
-            time_data.append(time.time())
+            time_data.append(timestamp)
+
+            # Append data to CSV file
+            with open(data_file, mode='a') as file:
+                writer = csv.writer(file)
+                writer.writerow([timestamp, temperature, humidity])
         else:
             print('Failed to get reading. Try again!')
 
