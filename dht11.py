@@ -1,4 +1,4 @@
-# Written by Al-Musbahi for CUOL Rocket Society
+# Written by Al-Musbahi
 # This script reads temperature and humidity data from a DHT11 sensor and plots it in real-time
 
 import time
